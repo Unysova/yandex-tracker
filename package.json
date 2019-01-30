@@ -1,0 +1,33 @@
+{
+  "name": "yandex-tracker",
+  "version": "1.0.0",
+  "description": "test project",
+  "author": "olga yunusova",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "install": "^0.12.2",
+    "npm": "^6.7.0",
+    "nuxt": "^2.0.0",
+    "ymaps": "^0.1.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "babel-eslint": "^10.0.1",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "element-ui": "^2.5.2",
+    "eslint": "^4.19.1",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^4.0.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0"
+  }
+}
