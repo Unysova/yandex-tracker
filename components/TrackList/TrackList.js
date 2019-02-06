@@ -1,5 +1,41 @@
+import { mapGetters } from 'vuex'
+
 export default {
-    name: 'TrackList'
+    name: 'TrackList',
+	pluginOptions: {},
+	data() {
+		return {
+			myArray: [
+			    'lllla',
+                'kkkk',
+                'kkkk'
+            ]
+		}
+	},
+	mounted() {
+		/*this.init();*/
+
+	},
+	computed: {
+		/*...mapGetters('tracks', [
+			'track'
+		])*/
+
+		track: {
+			get() {
+				return this.$store.state.tracks.track
+			},
+			set(value) {
+				this.$store.dispatch('tracks/addTrack', value);
+			}
+		}
+
+
+	},
+	methods: {
+
+	},
+
 }
 
 /*

@@ -1,20 +1,19 @@
+/*
+
 export const state = () => ({
-	items: [],
-	hasAnswer: false
+	tracks: [],
+	test: ''
 });
 
 export const getters = {
-		items: (state) => state.items,
-	hasAnswer: (state) => state.hasAnswer
+	tracks: (state) => state.tracks,
+	test: (state) => state.test
 };
 
 export const actions = {
-	async getAnswers({ state, commit }) {
-	const { data } = await this.$axios.get('/answer/');
 
 	commit('setAnswers', data.answers);
 	commit('setHasAnswer', data.has_answer);
-}
 };
 
 export const mutations = {
@@ -24,4 +23,42 @@ export const mutations = {
 setHasAnswer: (state, data) => {
 	state.hasAnswer = data;
 }
+};
+
+*/
+
+
+export const state = () => ({
+	track: [
+		'москва',
+		'ульяновск',
+		'саратов'
+	],
+	test: ''
+});
+
+export const actions = {
+	addTrack({commit}, value) {
+		commit('add_track', value)
+	},
+
+	updateTrack({commit}, track) {
+		commit('update_track', track)
+	}
+};
+
+export const getters = {
+	track: (state) => state.track
+};
+
+export const mutations = {
+	add_track(state, value) {
+		/*state.tracks.push(value)*/
+		state.track = value
+
+	},
+	update_track(state, track) {
+		state.track.length = 0;
+		state.track.push(track)
+	}
 };

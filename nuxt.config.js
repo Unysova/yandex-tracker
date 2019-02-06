@@ -22,9 +22,8 @@ module.exports = {
 	*/
 	loading: {color: '#3B8070'},
 	plugins: [
-		{src: '@/plugins/components'},
-		{src: '@/plugins/ymap'}
-	],
+		{src: '@/plugins/components'}
+		],
 	/*
 	** Build configuration
 	*/
