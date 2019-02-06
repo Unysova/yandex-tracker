@@ -30,11 +30,7 @@ setHasAnswer: (state, data) => {
 
 export const state = () => ({
 	track: [
-		'москва',
-		'ульяновск',
-		'саратов'
 	],
-	test: ''
 });
 
 export const actions = {
@@ -53,12 +49,15 @@ export const getters = {
 
 export const mutations = {
 	add_track(state, value) {
-		/*state.tracks.push(value)*/
-		state.track = value
+		state.track.push(value)
 
 	},
 	update_track(state, track) {
+		alert(track);
 		state.track.length = 0;
-		state.track.push(track)
+
+		track.forEach(function(item, i, arr) {
+            state.track.push(item)
+        });
 	}
 };

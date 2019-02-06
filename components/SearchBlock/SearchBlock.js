@@ -6,12 +6,10 @@ export default {
 	pluginOptions: {},
 	data() {
 		return {
-			datta: 'kk'
+            newAddress: ''
 		}
 	},
 	props: {
-        newAddress: '',
-		dr: ''
 
 	},
 	computed: {
@@ -26,7 +24,7 @@ export default {
 
 	methods: {
 		addAddress() {
-			const ymaps = global.ymaps;
+			/*const ymaps = global.ymaps;
 			ymaps.ready(function () {
 				var myGeocoder = ymaps.geocode('Москва, Сверчков переулок');
 				myGeocoder.then(
@@ -38,15 +36,14 @@ export default {
 						//выводим их в консоль
 						for(i=0; i < objs.length; i++)
 							alert(objs[0]);
-						/*console.log(objs[i].properties.getAll());*/
+						/!*console.log(objs[i].properties.getAll());*!/
 					}
 				);
-			});
-		},
+			});*/
+			alert(this.newAddress)
+            this.$store.dispatch('tracks/addTrack', this.newAddress)
 
-		test(){
-			 this.$store.dispatch('tracks/addTrack', true)
-		}
+        }
 	}
 }
 

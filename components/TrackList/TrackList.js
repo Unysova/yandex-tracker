@@ -26,7 +26,7 @@ export default {
 				return this.$store.state.tracks.track
 			},
 			set(value) {
-				this.$store.dispatch('tracks/addTrack', value);
+				this.$store.dispatch('tracks/updateTrack', value);
 			}
 		}
 
