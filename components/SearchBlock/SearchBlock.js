@@ -24,25 +24,8 @@ export default {
 
 	methods: {
 		addAddress() {
-			/*const ymaps = global.ymaps;
-			ymaps.ready(function () {
-				var myGeocoder = ymaps.geocode('Москва, Сверчков переулок');
-				myGeocoder.then(
-
-					function (res) {
-						this.datta = res;
-						//выуживаем массив результатов
-						var objs = res.geoObjects.toArray();
-						//выводим их в консоль
-						for(i=0; i < objs.length; i++)
-							alert(objs[0]);
-						/!*console.log(objs[i].properties.getAll());*!/
-					}
-				);
-			});*/
-			alert(this.newAddress)
-            this.$store.dispatch('tracks/addTrack', this.newAddress)
-
+            this.$store.dispatch('tracks/addTrack', this.newAddress);
+			this.newAddress = '';
         }
 	}
 }
