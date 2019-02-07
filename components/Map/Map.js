@@ -95,9 +95,9 @@ export default {
 
 		},
 		changeRoute(track) {
-			const ymaps = global.ymaps;
 			var self = this;
             self.ymaps.ready(function () {
+                self.myCollection.removeAll();
 
                 for (var i = 0; i < self.track.length; i++) {
                     self.myCollection.add(new self.ymaps.Placemark(self.track[i].coords,
@@ -110,7 +110,7 @@ export default {
 
                 self.myMap.setBounds(
                     self.myCollection.getBounds(), {checkZoomRange:true,
-                        zoomMargin: 10
+                        zoomMargin: 15
                });
 
 
