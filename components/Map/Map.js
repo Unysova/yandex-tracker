@@ -110,7 +110,7 @@ export default {
 
                 self.myMap.setBounds(
                     self.myCollection.getBounds(), {checkZoomRange:true,
-                        zoomMargin: 2
+                        zoomMargin: 10
                });
 
 
