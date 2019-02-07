@@ -97,15 +97,21 @@ export default {
 		changeRoute(track) {
 			const ymaps = global.ymaps;
 			var self = this;
-			ymaps.ready(function () {
-
-
+            self.ymaps.ready(function () {
 
                 for (var i = 0; i < self.track.length; i++) {
-                    self.myCollection.add(new self.ymaps.Placemark(self.track[i].coords));
-                }
-
+                    self.myCollection.add(new self.ymaps.Placemark(self.track[i].coords,
+                        {
+                            balloonContentHeader: `Точка № ${i + 1}`,
+                            balloonContentBody: `Адрес: ${self.track[i].address}`,
+                            hintContent: `Точка № ${i + 1}`}));
+                        }
                 self.myMap.geoObjects.add(self.myCollection);
+
+                self.myMap.setBounds(
+                    self.myCollection.getBounds(), {checkZoomRange:true,
+                        zoomMargin: 2
+               });
 
 
 
