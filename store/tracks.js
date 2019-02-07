@@ -32,11 +32,11 @@ export const state = () => ({
 	track: [
 		{
 			address: "Москва",
-			coords: [53.657083,91.575066]
+			coords: [55.75, 37.50]
 		},
         {
             address: "Киев",
-            coords: [70.657083,31.575066]
+            coords: [55.75, 37.71]
         }
 	]
 });
