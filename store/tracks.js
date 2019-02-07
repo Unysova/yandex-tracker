@@ -30,7 +30,15 @@ setHasAnswer: (state, data) => {
 
 export const state = () => ({
 	track: [
-	],
+		{
+			address: "Москва",
+			coords: [53.657083,91.575066]
+		},
+        {
+            address: "Киев",
+            coords: [70.657083,31.575066]
+        }
+	]
 });
 
 export const actions = {
@@ -53,10 +61,13 @@ export const mutations = {
 
 	},
 	update_track(state, track) {
-		alert(track);
-		state.track.length = 0;
+        state.track = [];
 
-		track.forEach(function(item, i, arr) {
+	    if (track.length === 0) {
+	        return
+        }
+
+		track.forEach(function(item) {
             state.track.push(item)
         });
 	}

@@ -1,12 +1,17 @@
 <template>
-  <div class="search-block">
-    <el-input placeholder="Введите адрес" @keyup.enter.native="addAddress" v-model="newAddress"></el-input>
-    <p>{{track}}</p>
-    <el-button type="primary" @click="addAddress">Добавить точку</el-button>
+  <div class="search-block" >
+    <el-input placeholder="Введите адрес"
+              @keyup.enter.native="addAddress"
+              v-model="newAddress">
+    </el-input>
+    <p>{{this.track}}</p>
+    <el-button type="primary"
+               @click="addAddress">
+        Добавить точку
+    </el-button>
     <el-dialog
             :visible.sync="dialogVisible"
-            width="30%"
-            :before-close="handleClose">
+            width="30%">
       <span>{{message}}</span>
     </el-dialog>
   </div>

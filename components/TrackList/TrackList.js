@@ -2,25 +2,15 @@ import { mapGetters } from 'vuex'
 
 export default {
     name: 'TrackList',
-	pluginOptions: {},
 	data() {
 		return {
-			myArray: [
-			    'lllla',
-                'kkkk',
-                'kkkk'
-            ]
 		}
 	},
-	mounted() {
+    mounted() {
 		/*this.init();*/
 
 	},
 	computed: {
-		/*...mapGetters('tracks', [
-			'track'
-		])*/
-
 		track: {
 			get() {
 				return this.$store.state.tracks.track
@@ -29,11 +19,18 @@ export default {
 				this.$store.dispatch('tracks/updateTrack', value);
 			}
 		}
-
-
 	},
 	methods: {
-
+		removeAddress(index) {
+            var tracker = this.track.slice(0);
+            tracker.splice(index, 1);
+            this.$store.dispatch('tracks/updateTrack', tracker);
+        },
+        removeAll() {
+            var tracker = this.track.slice(0);
+            tracker = [];
+            this.$store.dispatch('tracks/updateTrack', tracker);
+        }
 	},
 
 }

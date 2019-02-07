@@ -1,10 +1,34 @@
 <template>
   <ul class="track-list" v-model="track">
-    <draggable v-model="track" :options="{group:'people'}" @start="drag=true" @end="drag=false">
-      <li v-for="element in track" :key="element.id">{{element}} </li>
+    <draggable
+            v-model="track"
+            @start="drag=true"
+            @end="drag=false">
+      <li v-for="(element, index) in track"
+              :key="element.id">
+
+        {{element.address}} {{element.id}}
+
+        <el-button
+                type="primary"
+                @click="removeAddress(index)">
+          x
+        </el-button>
+      </li>
     </draggable>
 
-    <p>{{track}}</p>
+    <el-button
+            v-if="track.length != 0"
+            type="primary"
+            @click="removeAll()">
+      remove all
+    </el-button>
+
+    <div class="empty-state" v-if="track.length === 0">
+      <p>Добавьте точки в поле выше</p>
+    </div>
+
+    <p>{{this.track}}</p>
   </ul>
 </template>
 
