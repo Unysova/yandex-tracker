@@ -6,8 +6,10 @@ export default {
 	pluginOptions: {},
 	data() {
 		return {
-            newAddress: ''
-		}
+            newAddress: '',
+            dialogVisible: false,
+			message: ''
+        }
 	},
 	props: {
 
@@ -24,6 +26,11 @@ export default {
 
 	methods: {
 		addAddress() {
+			if (this.newAddress === '') {
+				this.dialogVisible = true;
+				this.message = 'Вы ввели пустое значение';
+				return
+			}
             this.$store.dispatch('tracks/addTrack', this.newAddress);
 			this.newAddress = '';
         }
