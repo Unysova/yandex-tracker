@@ -101,7 +101,7 @@ export default {
 			var self = this;
             self.ymaps.ready(function () {
                 self.myCollection.removeAll();
-
+                self.myPolyline.geometry.splice(0, self.myPolyline.geometry.getLength());
 
                 for (var i = 0; i < self.track.length; i++) {
                 	var coords = self.track[i].coords;
