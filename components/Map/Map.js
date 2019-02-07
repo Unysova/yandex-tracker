@@ -8,7 +8,7 @@ export default {
 		return {
             ymaps: {},
 			myMap: {},
-			multiRoute: {},
+            myPolyline: {},
             myCollection : {}
 		}
 	},
@@ -53,6 +53,9 @@ export default {
                     preset: 'islands#redIcon', //все метки красные
                     draggable: true // и их можно перемещать
                 });
+
+                self.myPolyline = new self.ymaps.Polyline([]);
+
 
 
                 /*// Создание экземпляра маршрута.
@@ -99,19 +102,26 @@ export default {
             self.ymaps.ready(function () {
                 self.myCollection.removeAll();
 
+
                 for (var i = 0; i < self.track.length; i++) {
-                    self.myCollection.add(new self.ymaps.Placemark(self.track[i].coords,
+                	var coords = self.track[i].coords;
+                    self.myCollection.add(new self.ymaps.Placemark(coords,
                         {
                             balloonContentHeader: `Точка № ${i + 1}`,
                             balloonContentBody: `Адрес: ${self.track[i].address}`,
                             hintContent: `Точка № ${i + 1}`}));
-                        }
-                self.myMap.geoObjects.add(self.myCollection);
+
+                    self.myPolyline.geometry.set(i, coords);
+
+                }
+                self.myMap.geoObjects.add(self.myCollection).add(self.myPolyline);
 
                 self.myMap.setBounds(
                     self.myCollection.getBounds(), {checkZoomRange:true,
                         zoomMargin: 15
                });
+
+
 
 
 
