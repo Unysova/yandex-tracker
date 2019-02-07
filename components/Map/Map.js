@@ -54,6 +54,12 @@ export default {
                     draggable: true // и их можно перемещать
                 });
 
+                self.myCollection.events.add('dragend', function (e) {
+
+                    self.reverseGeocoder(e.get('target').geometry.getCoordinates(), e.get('target').properties.get('id'));
+
+                });
+
                 self.myPolyline = new self.ymaps.Polyline([]);
 
 
@@ -104,16 +110,22 @@ export default {
                 self.myPolyline.geometry.splice(0, self.myPolyline.geometry.getLength());
 
                 for (var i = 0; i < self.track.length; i++) {
+                    //Вычисляем координаты конкретной точки
                 	var coords = self.track[i].coords;
+
+                	//Создаем коллекцию
                     self.myCollection.add(new self.ymaps.Placemark(coords,
-                        {
+                        {   id: i,
                             balloonContentHeader: `Точка № ${i + 1}`,
                             balloonContentBody: `Адрес: ${self.track[i].address}`,
                             hintContent: `Точка № ${i + 1}`}));
 
+                    //Добавляем координаты в ломаную
                     self.myPolyline.geometry.set(i, coords);
 
                 }
+
+
                 self.myMap.geoObjects.add(self.myCollection).add(self.myPolyline);
 
                 self.myMap.setBounds(
@@ -135,7 +147,28 @@ export default {
                         zoomMargin: 2});
 */
 			});
-		}
+		},
+
+        reverseGeocoder(coords, id) {
+		    var self = this;
+            this.ymaps.ready(function () {
+                var myGeocoder = self.ymaps.geocode(coords);
+                myGeocoder.then(
+                    function (res) {
+                        var address = res.geoObjects.get(0).getAddressLine();
+                        var trackPoint = {address: "", coords: []};
+                        trackPoint.address = address;
+                        trackPoint.coords = coords;
+
+                        self.$store.dispatch('tracks/changePoint', {trackPoint, id});
+                    },
+                    function (err) {
+                        alert("error")
+                    }
+                );
+            });
+
+        }
 
 	}
 }

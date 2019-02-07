@@ -48,7 +48,11 @@ export const actions = {
 
 	updateTrack({commit}, track) {
 		commit('update_track', track)
-	}
+	},
+
+    changePoint({commit}, track) {
+        commit('change_point', track)
+    }
 };
 
 export const getters = {
@@ -70,5 +74,9 @@ export const mutations = {
 		track.forEach(function(item) {
             state.track.push(item)
         });
-	}
+	},
+
+    change_point(state, {trackPoint, id}) {
+		state.track.splice(id, 1, trackPoint);
+    }
 };
