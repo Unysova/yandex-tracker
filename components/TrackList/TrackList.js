@@ -1,31 +1,32 @@
-export default {
-    name: 'TrackList'
-}
-
-/*
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
-	name: 'Quiz',
-	components: {
-		Background,
-		Progress,
-		Question,
-		CreativeTask,
-		Results,
-		Product
+    name: 'TrackList',
+	data() {
+		return {
+		}
 	},
 	computed: {
-		...mapGetters('quiz', [
-			'isFinishQuestions',
-			'currentStep',
-			'steps',
-			'questions',
-			'videoPaused'
-		]),
-	...mapGetters('answers', [
-		'hasAnswer'
-	])
-},
+		track: {
+			get() {
+				return this.$store.state.tracks.track
+			},
+			set(value) {
+				this.$store.dispatch('tracks/updateTrack', value);
+			}
+		}
+	},
+	methods: {
+		removeAddress(index) {
+            var tracker = this.track.slice(0);
+            tracker.splice(index, 1);
+            this.$store.dispatch('tracks/updateTrack', tracker);
+        },
+        removeAll() {
+            var tracker = this.track.slice(0);
+            tracker = [];
+            this.$store.dispatch('tracks/updateTrack', tracker);
+        }
+	},
 
-}*/
+}

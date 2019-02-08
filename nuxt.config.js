@@ -17,14 +17,19 @@ module.exports = {
 			{rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
 		]
 	},
+    css: [
+        {
+            src: '@/assets/theme/index.scss',
+            lang: 'scss'
+        }
+    ],
 	/*
 	** Customize the progress bar color
 	*/
 	loading: {color: '#3B8070'},
 	plugins: [
-		{src: '@/plugins/components'},
-		{src: '@/plugins/ymap'}
-	],
+		{src: '@/plugins/components'}
+		],
 	/*
 	** Build configuration
 	*/

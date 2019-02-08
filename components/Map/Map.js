@@ -1,75 +1,156 @@
-import ymaps from 'ymaps';
-
+import { mapGetters } from 'vuex'
 
 export default {
 	name: 'Map',
-	pluginOptions: {},
 	data() {
 		return {
-			myap: {}
+            ymaps: {},
+			myMap: {},
+            myPolyline: {},
+            myCollection : {},
+            multiRoute: {},
+            distance: 0
 		}
 	},
-	props: {
-		ymapClass: String,
-		mapLink: String
+    props: {
+        ymapsReady: false
+    },
+	computed: {
+		...mapGetters('tracks', [
+			'track'
+		])
 	},
-	mounted() {
+	watch: {
+		track(track) {
+			this.changeRoute(track)
+		},
 
-		this.$nextTick(() =>  {
-			this.readyMap();
-		});
+        ymapsReady() {
+			this.initMap();
+		}
 
 	},
 	methods: {
 		initMap() {
-			const ymaps = global.ymaps;
-			ymaps.ready(function () {
-				this.myMap  = new ymaps.Map("map", {
-					center: [55.76, 37.64],
-					zoom: 10
+			var self = this;
+			this.ymaps = global.ymaps;
+            this.ymaps.ready(function () {
+                //Создание и настройки карты
+				self.myMap = new self.ymaps.Map('map', {
+					center: [55.751574, 37.573856],
+					zoom: 9,
+                    controls: []
 				});
+
+                self.myMap.controls.add('zoomControl');
+
+                // Создание экземпляра коллекции
+                self.myCollection = new self.ymaps.GeoObjectCollection({}, {
+                    preset: 'islands#redIcon', //все метки красные
+                    draggable: true // и их можно перемещать
+                });
+
+                // Навешиваем на коллекцию событие при перетаскивании маркеров
+                self.myCollection.events.add('dragend', function (e) {
+                    self.reverseGeocoder(e.get('target').geometry.getCoordinates(), e.get('target').properties.get('id'));
+                });
+
+                // Создание экземпляра ломаной
+                self.myPolyline = new self.ymaps.Polyline([]);
+
+			});
+
+		},
+		changeRoute(track) {
+			var self = this;
+            self.ymaps.ready(function () {
+                //Удаляем старые объекты
+                self.myMap.geoObjects.remove(self.multiRoute);
+                self.myCollection.removeAll();
+                self.myPolyline.geometry.splice(0, self.myPolyline.geometry.getLength());
+
+                for (var i = 0; i < self.track.length; i++) {
+                    //Вычисляем координаты конкретной точки
+                	var coords = self.track[i].coords;
+
+                	//Создаем коллекцию
+                    self.myCollection.add(new self.ymaps.Placemark(coords,
+                        {   id: i,
+                            balloonContentHeader: `Точка № ${i + 1}`,
+                            balloonContentBody: `Адрес: ${self.track[i].address}`,
+                            hintContent: `Точка № ${i + 1}`}));
+
+                    //Добавляем координаты в ломаную
+                    self.myPolyline.geometry.set(i, coords);
+
+                }
+
+                //Добавляем на карту коллекцию и ломаную
+                self.myMap.geoObjects.add(self.myCollection).add(self.myPolyline);
+
+                //Вычисляем димтанцию между точками и ереводим в километры
+                self.distance = self.myPolyline.geometry.getDistance() / 1000;
+
+                //Устанавливаем границы карты так, чтобы был виден маршрут
+                self.myMap.setBounds(
+                    self.myCollection.getBounds(), {checkZoomRange:true,
+                        zoomMargin: 15
+               });
+
 			});
 		},
-		readyMap() {
-				const yandexMapScript = document.createElement('SCRIPT');
-				const { apiKey = '24e78141-6456-4ce4-8362-6caaf2838f0c', lang = 'ru_RU', version = '2.1' } = this.$options.pluginOptions;
-				const mapLink = this.mapLink || `https://api-maps.yandex.ru/${version}/?lang=${lang}${ apiKey && `&apikey=${apiKey}` }`;
-				yandexMapScript.setAttribute('src', mapLink);
-				yandexMapScript.setAttribute('async', '');
-				yandexMapScript.setAttribute('defer', '');
-				document.body.appendChild(yandexMapScript);
-				yandexMapScript.onload = () => {
-					this.initMap();
+        addMultiRoute() {
+		    var routePoints = [];
+		    var self = this;
+            // Создание экземпляра маршрута
+            this.multiRoute = new self.ymaps.multiRouter.MultiRoute({
+                referencePoints: [],
+                params: {
+                    reverseGeocoding: true
+                }
+            }, {
+                viaPointDraggable: false,
+                boundsAutoApply: true,
+                editorDrawOver: false,
+                editorMidPointsType: "via",
+                wayPointVisible:false,
+                viaPointVisible:false
+            });
 
-				}
-		},
+            for (var i = 0; i < self.track.length; i++) {
+                //Вычисляем координаты конкретной точки
+                var coords = self.track[i].coords;
+                routePoints.push(coords);
+            }
+
+            this.multiRoute.model.setReferencePoints(
+                routePoints
+            );
+
+            // Добавление маршрута на карту.
+            this.myMap.geoObjects.add(this.multiRoute);
+        },
+
+        reverseGeocoder(coords, id) {
+		    var self = this;
+
+		    //Переводим адрес в координаты и меняем данные точки
+            this.ymaps.ready(function () {
+                var myGeocoder = self.ymaps.geocode(coords);
+                myGeocoder.then(
+                    function (res) {
+                        var address = res.geoObjects.get(0).getAddressLine();
+                        var trackPoint = {address: "", coords: []};
+                        trackPoint.address = address;
+                        trackPoint.coords = coords;
+
+                        self.$store.dispatch('tracks/changePoint', {trackPoint, id});
+                    },
+                    function (err) {
+                    }
+                );
+            });
+
+        }
 	}
 }
-
-/*
-import {mapGetters} from 'vuex'
-
-export default {
-	name: 'Quiz',
-	components: {
-		Background,
-		Progress,
-		Question,
-		CreativeTask,
-		Results,
-		Product
-	},
-	computed: {
-		...mapGetters('quiz', [
-			'isFinishQuestions',
-			'currentStep',
-			'steps',
-			'questions',
-			'videoPaused'
-		]),
-	...mapGetters('answers', [
-		'hasAnswer'
-	])
-},
-
-}*/
