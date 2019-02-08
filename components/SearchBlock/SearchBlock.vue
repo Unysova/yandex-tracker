@@ -4,7 +4,6 @@
               @keyup.enter.native="addAddress"
               v-model="newAddress">
     </el-input>
-    <p>{{this.track}}</p>
     <el-button type="primary"
                @click="addAddress">
         Добавить точку

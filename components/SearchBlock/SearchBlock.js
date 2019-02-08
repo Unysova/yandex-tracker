@@ -49,19 +49,15 @@ export default {
                             trackPoint.address = self.newAddress;
                             trackPoint.coords = coords;
 
-                        self.$store.dispatch('tracks/addTrack', trackPoint);
+                        self.$store.dispatch('tracks/addPoint', trackPoint);
                         self.newAddress = '';
                     },
                     function (err) {
-                        alert("error")
+                        this.dialogVisible = true;
+                        this.message = 'Произошла ошибка. Перезагрузите страницу.';
                     }
                 );
             });
-
-
-
-            /*this.$store.dispatch('tracks/addTrack', this.newAddress);
-			this.newAddress = '';*/
         }
 	}
 }

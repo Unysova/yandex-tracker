@@ -1,5 +1,24 @@
-/*@import "./assets/theme/variables";*/
+@import "./assets/theme/variables";
+
+.track-list {
+    padding: 10px 5px;
+}
 
 ul {
-    background: blueviolet;
+    margin-bottom: 20px;
+}
+
+li {
+    background: $lightGray;
+    padding: 20px 10px;
+    font-size: 15px;
+    cursor: grab;
+
+    &:first-letter {
+        text-transform: capitalize;
+    }
+
+    &:not(:last-child) {
+        border-bottom: 1px solid $gray;
+    }
 }

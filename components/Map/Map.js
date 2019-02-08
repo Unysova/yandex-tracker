@@ -1,6 +1,4 @@
-import ymaps from 'ymaps';
 import { mapGetters } from 'vuex'
-
 
 export default {
 	name: 'Map',
@@ -9,7 +7,9 @@ export default {
             ymaps: {},
 			myMap: {},
             myPolyline: {},
-            myCollection : {}
+            myCollection : {},
+            multiRoute: {},
+            distance: 0
 		}
 	},
     props: {
@@ -19,12 +19,6 @@ export default {
 		...mapGetters('tracks', [
 			'track'
 		])
-	},
-	mounted() {
-		/*this.$nextTick(() =>  {
-			this.readyMap();
-		});*/
-
 	},
 	watch: {
 		track(track) {
@@ -41,6 +35,7 @@ export default {
 			var self = this;
 			this.ymaps = global.ymaps;
             this.ymaps.ready(function () {
+                //Создание и настройки карты
 				self.myMap = new self.ymaps.Map('map', {
 					center: [55.751574, 37.573856],
 					zoom: 9,
@@ -49,56 +44,19 @@ export default {
 
                 self.myMap.controls.add('zoomControl');
 
+                // Создание экземпляра коллекции
                 self.myCollection = new self.ymaps.GeoObjectCollection({}, {
                     preset: 'islands#redIcon', //все метки красные
                     draggable: true // и их можно перемещать
                 });
 
+                // Навешиваем на коллекцию событие при перетаскивании маркеров
                 self.myCollection.events.add('dragend', function (e) {
-
                     self.reverseGeocoder(e.get('target').geometry.getCoordinates(), e.get('target').properties.get('id'));
-
                 });
 
+                // Создание экземпляра ломаной
                 self.myPolyline = new self.ymaps.Polyline([]);
-
-
-
-                /*// Создание экземпляра маршрута.
-                self.multiRoute = new ymaps.multiRouter.MultiRoute({
-                    // Точки маршрута.
-                    // Обязательное поле.
-                    referencePoints: [
-                        'Москва, метро Смоленская',
-                        'Москва, кремль',
-                        [55.734876, 37.59308], // улица Льва Толстого.
-                    ],
-                    params: {
-                        reverseGeocoding: true
-                    }
-                }, {
-                    // Автоматически устанавливать границы карты так,
-                    // чтобы маршрут был виден целиком.
-                    viaPointDraggable: true,
-                    boundsAutoApply: true,
-                    editorDrawOver: false,
-                    editorMidPointsType: "via"
-                });
-
-                self.multiRoute.editor.start({
-                    addWayPoints: true,
-                    removeWayPoints: true,
-                    addMidPoints: true
-                });
-
-                self.multiRoute.events.add('update', function(e){
-
-                });
-
-
-				// Добавление маршрута на карту.
-				self.myMap.geoObjects.add(self.multiRoute);*/
-
 
 			});
 
@@ -106,6 +64,8 @@ export default {
 		changeRoute(track) {
 			var self = this;
             self.ymaps.ready(function () {
+                //Удаляем старые объекты
+                self.myMap.geoObjects.remove(self.multiRoute);
                 self.myCollection.removeAll();
                 self.myPolyline.geometry.splice(0, self.myPolyline.geometry.getLength());
 
@@ -125,32 +85,56 @@ export default {
 
                 }
 
-
+                //Добавляем на карту коллекцию и ломаную
                 self.myMap.geoObjects.add(self.myCollection).add(self.myPolyline);
 
+                //Вычисляем димтанцию между точками и ереводим в километры
+                self.distance = self.myPolyline.geometry.getDistance() / 1000;
+
+                //Устанавливаем границы карты так, чтобы был виден маршрут
                 self.myMap.setBounds(
                     self.myCollection.getBounds(), {checkZoomRange:true,
                         zoomMargin: 15
                });
 
-
-
-
-
-
-				/*self.multiRoute.model.setReferencePoints(
-					track
-				);
-
-                self.myMap.setBounds(
-                    self.multiRoute.getBounds(), {checkZoomRange:true,
-                        zoomMargin: 2});
-*/
 			});
 		},
+        addMultiRoute() {
+		    var routePoints = [];
+		    var self = this;
+            // Создание экземпляра маршрута
+            this.multiRoute = new self.ymaps.multiRouter.MultiRoute({
+                referencePoints: [],
+                params: {
+                    reverseGeocoding: true
+                }
+            }, {
+                viaPointDraggable: false,
+                boundsAutoApply: true,
+                editorDrawOver: false,
+                editorMidPointsType: "via",
+                wayPointVisible:false,
+                viaPointVisible:false
+            });
+
+            for (var i = 0; i < self.track.length; i++) {
+                //Вычисляем координаты конкретной точки
+                var coords = self.track[i].coords;
+                routePoints.push(coords);
+            }
+
+            this.multiRoute.model.setReferencePoints(
+                routePoints
+            );
+
+            // Добавление маршрута на карту.
+            this.myMap.geoObjects.add(this.multiRoute);
+        },
 
         reverseGeocoder(coords, id) {
 		    var self = this;
+
+		    //Переводим адрес в координаты и меняем данные точки
             this.ymaps.ready(function () {
                 var myGeocoder = self.ymaps.geocode(coords);
                 myGeocoder.then(
@@ -163,40 +147,10 @@ export default {
                         self.$store.dispatch('tracks/changePoint', {trackPoint, id});
                     },
                     function (err) {
-                        alert("error")
                     }
                 );
             });
 
         }
-
 	}
 }
-
-/*
-import {mapGetters} from 'vuex'
-
-export default {
-	name: 'Quiz',
-	components: {
-		Background,
-		Progress,
-		Question,
-		CreativeTask,
-		Results,
-		Product
-	},
-	computed: {
-		...mapGetters('quiz', [
-			'isFinishQuestions',
-			'currentStep',
-			'steps',
-			'questions',
-			'videoPaused'
-		]),
-	...mapGetters('answers', [
-		'hasAnswer'
-	])
-},
-
-}*/
