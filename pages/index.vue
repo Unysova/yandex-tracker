@@ -11,8 +11,6 @@
 </template>
 
 <script>
-    import ymaps from 'ymaps';
-
     import TrackList from '~/components/TrackList';
 	import SearchBlock from '~/components/SearchBlock';
 	import Map from '~/components/Map';
